@@ -30,6 +30,8 @@ export default function Volunteer() {
     directions: [] as string[],
     availability: 'Выходные',
     motivation: '',
+    parentName: '',
+    parentPhone: '',
     agreeData: false,
     parentConsent: false,
   });
@@ -271,6 +273,45 @@ export default function Volunteer() {
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full p-3 text-xs border border-gray-200 rounded-xl focus:outline-none focus:border-sky-blue"
                     />
+                  </div>
+                </div>
+
+                {/* Родительские контакты */}
+                <div className="bg-[#f0f6fa] p-4 rounded-2xl border border-sky-blue/20">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <ShieldCheck size={16} className="text-sky-blue flex-shrink-0" />
+                    <h4 className="text-[11px] font-bold text-dark-blue uppercase tracking-wider">
+                      Контакты родителей / опекунов (для волонтёров до 18 лет)
+                    </h4>
+                  </div>
+                  <p className="text-[10px] text-gray-500 mb-3">
+                    Укажите контакты одного из родителей или опекуна для подтверждения участия.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold text-dark-blue mb-1 uppercase tracking-wider">
+                        ФИО родителя / опекуна
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="ФИО родителя"
+                        value={formData.parentName}
+                        onChange={(e) => setFormData({ ...formData, parentName: e.target.value })}
+                        className="w-full p-2.5 text-xs border border-gray-200 rounded-xl focus:outline-none focus:border-sky-blue bg-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-dark-blue mb-1 uppercase tracking-wider">
+                        Телефон родителя *
+                      </label>
+                      <input
+                        type="tel"
+                        placeholder="+996 ..."
+                        value={formData.parentPhone}
+                        onChange={(e) => setFormData({ ...formData, parentPhone: e.target.value })}
+                        className="w-full p-2.5 text-xs border border-gray-200 rounded-xl focus:outline-none focus:border-sky-blue bg-white"
+                      />
+                    </div>
                   </div>
                 </div>
 

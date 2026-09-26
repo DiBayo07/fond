@@ -14,6 +14,8 @@ import {
   CheckCircle2,
   Share2,
   X,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -41,6 +43,15 @@ function DonateContent() {
   const [donorName, setDonorName] = useState('');
   const [donorEmail, setDonorEmail] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [copiedCard, setCopiedCard] = useState(false);
+
+  const handleCopyCard = () => {
+    if (typeof navigator !== 'undefined') {
+      navigator.clipboard.writeText('4169585357990323');
+      setCopiedCard(true);
+      setTimeout(() => setCopiedCard(false), 2500);
+    }
+  };
 
   useEffect(() => {
     if (preselectedHome) {
@@ -397,6 +408,46 @@ function DonateContent() {
             </Link>
 
             <Heart className="absolute -bottom-8 -right-8 w-40 h-40 text-accent opacity-5 pointer-events-none" />
+          </div>
+
+          {/* Direct Card Transfer (Client Requested) */}
+          <div className="bg-gradient-to-br from-[#0b132b] via-[#101b3b] to-[#1e293b] text-white p-6 rounded-3xl shadow-lg border border-white/10 relative overflow-hidden">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#e5b958] flex items-center gap-1.5">
+                <span>✦</span> Официальная карта проекта
+              </span>
+              <span className="text-[11px] font-mono text-gray-300">Visa / Элкарт / MBank</span>
+            </div>
+
+            <div className="mb-4">
+              <span className="text-[10px] text-gray-400 block mb-1">Номер карты для прямых переводов:</span>
+              <div className="flex items-center justify-between bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
+                <span className="font-mono text-base sm:text-lg font-bold tracking-widest text-white">
+                  4169 5853 5799 0323
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyCard}
+                  className="flex items-center gap-1.5 bg-[#e5b958] text-[#0b132b] px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-yellow-400 active:scale-95 transition cursor-pointer shadow-xs"
+                >
+                  {copiedCard ? (
+                    <>
+                      <Check size={14} className="text-green-800" />
+                      <span>Скопировано!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={14} />
+                      <span>Скопировать</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-gray-300 leading-relaxed">
+              Вы можете сделать прямой перевод через любое банковское приложение (MBank, Optima, Demir, Бакай, О!Деньги) по номеру карты выше.
+            </p>
           </div>
 
           {/* Quick Bank Details Card */}

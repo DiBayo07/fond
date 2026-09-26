@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Cloud, Menu, X } from 'lucide-react';
 import { useLanguage, Language } from '@/context/LanguageContext';
@@ -30,14 +31,20 @@ export default function Header() {
       <div className="container mx-auto px-4 h-20 flex items-center justify-between max-w-6xl">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-sky-blue/10 flex items-center justify-center text-sky-blue group-hover:scale-105 transition">
-            <Cloud className="h-6 w-6" strokeWidth={2} />
+          <div className="w-11 h-11 rounded-xl overflow-hidden shadow-xs border border-gray-200 flex-shrink-0 group-hover:scale-105 transition bg-[#0b132b]">
+            <Image
+              src="/logo.jpg"
+              alt="Project Sky Logo"
+              width={44}
+              height={44}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl md:text-2xl font-bold text-dark-blue tracking-tight leading-none uppercase font-serif">
-              Project Sky
+            <span className="text-xl md:text-2xl font-bold text-dark-blue tracking-wider leading-none uppercase font-serif">
+              SKY
             </span>
-            <span className="text-[10px] md:text-[11px] text-sky-blue italic tracking-wide mt-1 font-serif">
+            <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-widest mt-1 font-semibold">
               Supporting Kids & Youth
             </span>
           </div>

@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Cloud, Send, Mail, MapPin, Phone } from 'lucide-react';
+import Image from 'next/image';
+import { Send, Mail, MapPin, Phone } from 'lucide-react';
 import { InstagramIcon } from '@/components/Icons';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -10,18 +11,24 @@ export default function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-[#172132] text-white pt-16 pb-8 border-t border-gray-800">
+    <footer className="bg-[#0b132b] text-white pt-16 pb-8 border-t border-gray-800">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand Info */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-4 group">
-              <div className="w-9 h-9 rounded-lg bg-sky-blue/20 flex items-center justify-center text-sky-blue">
-                <Cloud className="h-5 w-5" strokeWidth={2} />
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-xs border border-white/10 flex-shrink-0">
+                <Image
+                  src="/logo.jpg"
+                  alt="Project Sky Logo"
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-bold tracking-tight leading-none uppercase font-serif">Project Sky</span>
-                <span className="text-[10px] text-sky-blue italic tracking-wide mt-1 font-serif">Supporting Kids & Youth</span>
+                <span className="text-xl font-bold tracking-wider leading-none uppercase font-serif">SKY</span>
+                <span className="text-[9px] text-gray-400 uppercase tracking-widest mt-1 font-medium">Supporting Kids & Youth</span>
               </div>
             </Link>
             <p className="text-xs text-gray-400 leading-relaxed mb-6">
