@@ -255,7 +255,7 @@ export default function Volunteer() {
                     <input
                       type="tel"
                       required
-                      placeholder="+996 777 000 000"
+                      placeholder="+996 709 809 017"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="w-full p-3 text-xs border border-gray-200 rounded-xl focus:outline-none focus:border-sky-blue"

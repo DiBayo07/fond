@@ -1,25 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f8fa;
-  --foreground: #0b132b;
+  --background: #f8fafc;
+  --foreground: #070d1e;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-soft-blue: #e8f0f8;
-  --color-sky-blue: #4a90e2;
+  --color-soft-blue: #eef4fb;
+  --color-sky-blue: #38bdf8;
   --color-dark-blue: #0b132b;
   --color-deep-navy: #070d1e;
+  --color-midnight: #0a1128;
   --color-accent: #f26a36;
   --color-gold: #d4af37;
   --color-star-gold: #f3c68f;
-  --color-green-btn: #476a59;
+  --color-gold-hover: #e5b958;
+  --color-green-btn: #3d6a52;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Celestial Starlight effects matching the logo */
+.bg-celestial {
+  background: radial-gradient(circle at 50% 10%, #162447 0%, #0b132b 50%, #070d1e 100%);
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #fce0ad 0%, #e5b958 50%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-gold-glow {
+  border-color: rgba(229, 185, 88, 0.35);
+  box-shadow: 0 0 15px rgba(229, 185, 88, 0.08);
 }

@@ -14,6 +14,7 @@ import {
   DollarSign,
   Activity,
   ArrowRight,
+  Sparkles,
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -22,55 +23,72 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {/* HERO SECTION */}
-      <section className="bg-white pt-10 pb-20 px-4 relative overflow-hidden">
+      {/* HERO SECTION - Deep Midnight & Gold Stars Theme */}
+      <section className="bg-gradient-to-b from-[#070d1e] via-[#0b1430] to-[#0f1d44] text-white pt-12 pb-24 px-4 relative overflow-hidden">
+        {/* Glowing celestial star effect */}
+        <div className="absolute top-10 left-1/4 w-72 h-72 bg-[#e5b958]/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-sky-blue/10 rounded-full blur-3xl pointer-events-none"></div>
+
         <div className="container mx-auto max-w-6xl flex flex-col md:flex-row items-center relative z-10">
-          <div className="w-full md:w-[48%] pr-0 md:pr-10 mb-10 md:mb-0">
-            <h1 className="text-5xl md:text-7xl font-serif font-bold text-dark-blue mb-2 tracking-tight">
-              {t.heroTitle}
+          <div className="w-full md:w-[48%] pr-0 md:pr-10 mb-12 md:mb-0">
+            {/* Logo Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-[#e5b958]/30 mb-6 backdrop-blur-xs">
+              <span className="text-[#e5b958] text-xs">✦</span>
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#f3c68f]">
+                SUPPORTING KIDS & YOUTH
+              </span>
+              <span className="text-[#e5b958] text-xs">✦</span>
+            </div>
+
+            <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-3 tracking-tight">
+              Project <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-[#f3c68f] to-[#e5b958]">Sky</span>
             </h1>
-            <p className="text-2xl text-sky-blue italic mb-6 font-serif tracking-wide">
-              {t.heroSubtitle}
+            <p className="text-2xl text-[#f3c68f] italic mb-6 font-serif tracking-wide flex items-center gap-2">
+              <span>{t.heroSubtitle}</span>
+              <span className="text-xs text-[#e5b958] font-normal not-italic">★</span>
             </p>
-            <p className="text-[13px] md:text-sm text-gray-600 mb-8 leading-relaxed max-w-md">
+            <p className="text-[13px] md:text-sm text-gray-300 mb-8 leading-relaxed max-w-md">
               {t.heroDesc}
             </p>
             <div className="flex flex-col sm:flex-row flex-wrap gap-3">
               <Link
                 href="/donate"
-                className="bg-accent text-white px-6 py-3 rounded-lg text-center font-bold text-[11px] uppercase tracking-wider hover:bg-orange-600 active:scale-95 transition shadow-sm"
+                className="bg-gradient-to-r from-accent via-accent to-[#e5b958] text-white px-7 py-3.5 rounded-xl text-center font-bold text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition shadow-lg shadow-accent/25 flex items-center justify-center gap-2"
               >
-                {t.heroDonateBtn}
+                <Sparkles size={15} className="text-yellow-200" />
+                <span>{t.heroDonateBtn}</span>
               </Link>
               <Link
                 href="/volunteer"
-                className="bg-green-btn text-white px-6 py-3 rounded-lg text-center font-bold text-[11px] uppercase tracking-wider hover:bg-opacity-90 active:scale-95 transition shadow-sm"
+                className="bg-white/10 border border-[#e5b958]/40 text-white px-6 py-3.5 rounded-xl text-center font-bold text-xs uppercase tracking-wider hover:bg-white/20 active:scale-95 transition backdrop-blur-xs"
               >
                 {t.heroVolunteerBtn}
               </Link>
               <Link
                 href="/homes"
-                className="border border-gray-200 text-gray-600 px-5 py-3 rounded-lg text-center font-bold text-[11px] uppercase tracking-wider hover:border-gray-400 hover:text-dark-blue active:scale-95 transition"
+                className="border border-white/20 text-gray-300 px-5 py-3.5 rounded-xl text-center font-bold text-xs uppercase tracking-wider hover:border-white hover:text-white active:scale-95 transition"
               >
                 {t.heroWhoNeedsBtn}
               </Link>
             </div>
           </div>
           <div className="w-full md:w-[52%] relative">
-            <div className="relative rounded-3xl overflow-hidden shadow-lg aspect-[4/3] max-h-[420px] w-full border border-gray-100">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3] max-h-[420px] w-full border-2 border-[#e5b958]/30">
               <img
                 src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1000&auto=format&fit=crop"
-                alt="Children holding hands in heart shape"
+                alt="Children reaching for dreams"
                 className="w-full h-full object-cover hover:scale-105 transition duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-dark-blue/40 via-transparent to-transparent"></div>
-              <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md p-3.5 rounded-xl flex items-center justify-between text-xs">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#070d1e]/80 via-transparent to-transparent"></div>
+              <div className="absolute bottom-4 left-4 right-4 bg-[#070d1e]/90 backdrop-blur-md p-4 rounded-2xl border border-white/10 flex items-center justify-between text-xs">
                 <div>
-                  <p className="font-bold text-dark-blue">Project Sky Kyrgyzstan</p>
-                  <p className="text-gray-500 text-[11px]">Бишкек • Ош • Чуй • Нарын</p>
+                  <p className="font-bold text-white font-serif flex items-center gap-1.5">
+                    <span className="text-[#e5b958]">✦</span> Project Sky Kyrgyzstan
+                  </p>
+                  <p className="text-gray-400 text-[11px]">Бишкек • Ош • Чуй • Каракол • Нарын</p>
                 </div>
-                <span className="px-2.5 py-1 bg-sky-blue/20 text-sky-blue font-bold rounded-full text-[10px] uppercase">
-                  Активные программы
+                <span className="px-3 py-1 bg-[#e5b958]/20 text-[#e5b958] font-bold rounded-full text-[10px] uppercase border border-[#e5b958]/30">
+                  Помощь детям
                 </span>
               </div>
             </div>

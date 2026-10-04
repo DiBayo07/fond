@@ -76,8 +76,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <span className="text-gray-400 text-[10px] uppercase font-bold block">Телефон / WhatsApp</span>
-                    <a href="tel:+996777123456" className="font-bold text-dark-blue hover:text-sky-blue text-sm">
-                      +996 777 123 456
+                    <a href="tel:+996709809017" className="font-bold text-dark-blue hover:text-sky-blue text-sm">
+                      +996 709 809 017
                     </a>
                   </div>
                 </div>

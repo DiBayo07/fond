@@ -516,7 +516,7 @@ function DonateContent() {
             <h3 className="text-2xl font-bold text-dark-blue mb-2 font-serif">
               Спасибо за вашу помощь!
             </h3>
-            <p className="text-xs text-gray-600 mb-6 leading-relaxed">
+            <p className="text-xs text-gray-600 mb-4 leading-relaxed">
               Ваше пожертвование на сумму{' '}
               <strong className="text-dark-blue font-bold">{currentAmount.toLocaleString()} сом</strong>{' '}
               {donationTarget === 'home' ? (
@@ -524,10 +524,30 @@ function DonateContent() {
               ) : (
                 <>в фонд <strong>Project Sky</strong></>
               )}{' '}
-              успешно принято. Электронное подтверждение отправлено вам.
+              оформлено. Средства направляются напрямую на нужды подопечных.
             </p>
 
-            <div className="p-4 bg-gray-50 rounded-xl mb-6 text-xs text-gray-500 space-y-1 text-left">
+            {/* Official Card Transfer Box in Modal */}
+            <div className="p-3.5 bg-[#070d1e] text-white rounded-2xl mb-5 text-left border border-[#e5b958]/30">
+              <span className="text-[10px] text-gray-400 block mb-1">Номер карты для прямого перевода:</span>
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-sm font-bold text-white tracking-wider">
+                  4169 5853 5799 0323
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyCard}
+                  className="bg-[#e5b958] text-[#070d1e] px-2.5 py-1 rounded text-[10px] font-bold hover:bg-yellow-400 transition"
+                >
+                  {copiedCard ? 'Скопировано!' : 'Скопировать'}
+                </button>
+              </div>
+              <p className="text-[10px] text-gray-400 mt-2">
+                Переведите через MBank, Оптима или Бакай.
+              </p>
+            </div>
+
+            <div className="p-3.5 bg-gray-50 rounded-xl mb-5 text-xs text-gray-500 space-y-1 text-left border border-gray-100">
               <p>ID транзакции: #SKY-{Math.floor(100000 + Math.random() * 900000)}</p>
               <p>Статус: Выполнено</p>
               <p>Дата: {new Date().toLocaleDateString('ru-RU')}</p>
