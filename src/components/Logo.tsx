@@ -10,65 +10,49 @@ interface LogoProps {
 }
 
 export default function Logo({ variant = 'light', size = 'md', showText = true }: LogoProps) {
-  const iconSize = size === 'sm' ? 36 : size === 'lg' ? 52 : 42;
+  const imgSize = size === 'sm' ? 38 : size === 'lg' ? 56 : 46;
   const textSize = size === 'sm' ? 'text-lg' : size === 'lg' ? 'text-2xl' : 'text-xl';
   const subTextSize = size === 'sm' ? 'text-[8px]' : size === 'lg' ? 'text-[10px]' : 'text-[9px]';
 
   return (
     <Link href="/" className="flex items-center gap-3 group">
-      {/* Drop Colors Circle Badge matching the reference design */}
+      {/* Brand Logo Image (Matching the official SKY artwork) */}
       <div
-        className={`relative rounded-full flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105 border ${
+        className={`relative rounded-xl overflow-hidden shadow-sm flex-shrink-0 group-hover:scale-105 transition duration-300 border ${
           variant === 'dark'
-            ? 'border-white/20 bg-white/10 shadow-md'
-            : 'border-gray-200 bg-white shadow-xs'
+            ? 'border-white/20 bg-[#070d1e] shadow-md'
+            : 'border-gray-200 bg-[#070d1e]'
         }`}
-        style={{ width: iconSize, height: iconSize }}
+        style={{ width: imgSize, height: imgSize }}
       >
-        <svg
-          viewBox="0 0 100 100"
-          className="w-[72%] h-[72%]"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* Outer ring */}
-          <circle
-            cx="50"
-            cy="50"
-            r="44"
-            stroke={variant === 'dark' ? '#ffffff' : '#0e387a'}
-            strokeWidth="5"
-            strokeOpacity={variant === 'dark' ? 0.35 : 0.85}
-          />
-          {/* Left half of droplet: Royal blue */}
-          <path
-            d="M50 18 C50 18 24 45 24 62 C24 76.36 35.64 88 50 88 Z"
-            fill="#0e387a"
-          />
-          {/* Right half of droplet: Vibrant orange */}
-          <path
-            d="M50 18 C50 18 76 45 76 62 C76 76.36 64.36 88 50 88 Z"
-            fill="#f26a21"
-          />
-        </svg>
+        <img
+          src="/fond/logo.jpg"
+          onError={(e) => {
+            if (e.currentTarget.src.indexOf('/fond/logo.jpg') !== -1) {
+              e.currentTarget.src = '/logo.jpg';
+            }
+          }}
+          alt="SKY — Supporting Kids & Youth"
+          className="w-full h-full object-cover"
+        />
       </div>
 
       {showText && (
         <div className="flex flex-col select-none">
-          {/* Brand Name */}
+          {/* Main Logo Title "SKY" with underline under K */}
           <div className="flex items-center">
             <span
-              className={`font-serif font-bold tracking-tight leading-none ${textSize} ${
-                variant === 'dark' ? 'text-white' : 'text-dark-blue'
+              className={`font-serif font-bold tracking-[0.16em] leading-none uppercase ${textSize} ${
+                variant === 'dark' ? 'text-white' : 'text-[#0e387a]'
               }`}
             >
-              Project <span className="text-[#f26a21]">Sky</span>
+              S<span className="relative inline-block">K<span className="absolute -bottom-0.5 left-0 right-0 h-[2px] bg-[#f26a21] rounded-full"></span></span>Y
             </span>
           </div>
 
-          {/* Subtitle */}
+          {/* Subtitle "SUPPORTING KIDS & YOUTH" */}
           <span
-            className={`uppercase tracking-[0.2em] font-bold leading-tight mt-1 ${subTextSize} ${
+            className={`uppercase tracking-[0.22em] font-semibold leading-tight mt-1 ${subTextSize} ${
               variant === 'dark' ? 'text-gray-300' : 'text-gray-500'
             }`}
           >
@@ -79,4 +63,5 @@ export default function Logo({ variant = 'light', size = 'md', showText = true }
     </Link>
   );
 }
+
 
