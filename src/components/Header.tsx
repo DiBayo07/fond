@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Shield, Sparkles } from 'lucide-react';
+import { Menu, X, Shield, Phone, Mail, Send } from 'lucide-react';
+import { InstagramIcon } from '@/components/Icons';
 import { useLanguage, Language } from '@/context/LanguageContext';
 import Logo from '@/components/Logo';
 
@@ -24,161 +25,189 @@ export default function Header() {
     { href: '/homes', label: t.navHomes },
     { href: '/volunteer', label: t.navVolunteer },
     { href: '/reports', label: t.navReports },
+    { href: '/contact', label: t.navContact },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#070d1e]/95 backdrop-blur-md border-b border-[#e5b958]/20 shadow-lg shadow-[#070d1e]/40 transition-all text-white">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between max-w-6xl">
-        {/* Brand Logo with exact starry styling */}
-        <Logo variant="dark" size="md" />
-
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-7 text-[12px] font-bold tracking-wider uppercase">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`transition pb-1 border-b-2 flex items-center gap-1 ${
-                isActive(link.href)
-                  ? 'text-[#e5b958] border-[#e5b958] font-black'
-                  : 'text-gray-300 border-transparent hover:text-white hover:border-[#e5b958]/60'
-              }`}
+    <header className="sticky top-0 z-50 w-full shadow-xs">
+      {/* 1. TOP BAR: Dark Blue Bar from Reference Mockup */}
+      <div className="bg-[#0e387a] text-white text-[11px] font-medium py-2 px-4 border-b border-white/10">
+        <div className="container mx-auto max-w-6xl flex items-center justify-between">
+          {/* Left: Phone & Email */}
+          <div className="flex items-center space-x-5">
+            <a
+              href="tel:+996709809017"
+              className="flex items-center gap-1.5 hover:text-orange-300 transition"
             >
-              <span>{link.label}</span>
-              {isActive(link.href) && <span className="text-[10px] text-[#e5b958]">✦</span>}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Actions & Language Switcher */}
-        <div className="hidden lg:flex items-center space-x-5">
-          {/* Language Switcher */}
-          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider bg-white/5 px-3 py-1 rounded-full border border-white/10">
-            {(['ru', 'kg', 'en'] as Language[]).map((lang, idx) => (
-              <React.Fragment key={lang}>
-                {idx > 0 && <span className="text-gray-600">|</span>}
-                <button
-                  type="button"
-                  onClick={() => setLanguage(lang)}
-                  className={`transition px-1.5 py-0.5 rounded cursor-pointer ${
-                    language === lang
-                      ? 'text-[#070d1e] font-extrabold bg-[#e5b958] shadow-xs'
-                      : 'hover:text-white text-gray-300'
-                  }`}
-                >
-                  {lang.toUpperCase()}
-                </button>
-              </React.Fragment>
-            ))}
+              <Phone size={13} className="text-orange-400" />
+              <span>+996 709 809 017</span>
+            </a>
+            <span className="hidden sm:inline text-white/30">•</span>
+            <a
+              href="mailto:info@projectsky.kg"
+              className="hidden sm:flex items-center gap-1.5 hover:text-orange-300 transition"
+            >
+              <Mail size={13} className="text-orange-400" />
+              <span>info@projectsky.kg</span>
+            </a>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <Link
-              href="/donate"
-              className="bg-gradient-to-r from-accent via-accent to-[#e5b958] text-white px-5 py-2.5 rounded-lg font-bold text-[11px] uppercase tracking-wider hover:brightness-110 active:scale-95 transition shadow-md shadow-accent/20 flex items-center gap-1.5"
-            >
-              <Sparkles size={13} className="text-yellow-200" />
-              <span>{t.navDonate}</span>
-            </Link>
-            <Link
-              href="/contact"
-              className="border border-white/20 text-gray-200 px-4 py-2.5 rounded-lg font-bold text-[11px] uppercase tracking-wider hover:border-[#e5b958] hover:text-[#e5b958] active:scale-95 transition bg-white/5"
-            >
-              {t.navContact}
-            </Link>
-            {/* Admin Panel Quick Link */}
+          {/* Right: Social icons & Language Switcher */}
+          <div className="flex items-center space-x-4">
+            <div className="hidden sm:flex items-center space-x-2.5 text-white/80">
+              <a
+                href="https://wa.me/996709809017"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-white transition"
+                aria-label="WhatsApp"
+              >
+                <Phone size={13} />
+              </a>
+              <a
+                href="https://t.me/projectsky"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-white transition"
+                aria-label="Telegram"
+              >
+                <Send size={13} />
+              </a>
+              <a
+                href="https://instagram.com/projectsky"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-white transition"
+                aria-label="Instagram"
+              >
+                <InstagramIcon size={13} />
+              </a>
+            </div>
+
+            <span className="hidden sm:inline text-white/30">|</span>
+
+            {/* Language Switcher */}
+            <div className="flex items-center space-x-1 font-bold text-[10px] tracking-wider uppercase">
+              {(['ru', 'kg', 'en'] as Language[]).map((lang, idx) => (
+                <React.Fragment key={lang}>
+                  {idx > 0 && <span className="text-white/40">/</span>}
+                  <button
+                    type="button"
+                    onClick={() => setLanguage(lang)}
+                    className={`transition px-1 py-0.5 rounded cursor-pointer ${
+                      language === lang
+                        ? 'text-white font-extrabold bg-[#f26a21] shadow-2xs'
+                        : 'text-white/70 hover:text-white'
+                    }`}
+                  >
+                    {lang.toUpperCase()}
+                  </button>
+                </React.Fragment>
+              ))}
+            </div>
+
+            {/* Admin shortcut */}
             <Link
               href="/admin"
               title="Административная панель"
-              className="p-2.5 rounded-lg text-gray-400 hover:text-[#e5b958] hover:bg-white/5 transition border border-white/10"
+              className="text-white/60 hover:text-white transition pl-1"
             >
-              <Shield size={16} />
+              <Shield size={13} />
             </Link>
           </div>
         </div>
+      </div>
 
-        {/* Mobile controls */}
-        <div className="flex items-center gap-3 lg:hidden">
-          {/* Mobile Language Switcher */}
-          <div className="flex items-center space-x-1 text-[11px] font-bold text-gray-300 uppercase bg-white/10 px-2 py-1 rounded-md border border-white/10">
-            {(['ru', 'kg', 'en'] as Language[]).map((lang, idx) => (
-              <React.Fragment key={lang}>
-                {idx > 0 && <span className="text-gray-600">|</span>}
-                <button
-                  type="button"
-                  onClick={() => setLanguage(lang)}
-                  className={`px-1 ${language === lang ? 'text-[#e5b958] font-extrabold' : 'text-gray-400'}`}
-                >
-                  {lang.toUpperCase()}
-                </button>
-              </React.Fragment>
+      {/* 2. MAIN NAV: Crisp White Bar with Orange Button */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="container mx-auto px-4 h-20 flex items-center justify-between max-w-6xl">
+          {/* Logo */}
+          <Logo variant="light" size="md" />
+
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center space-x-7 text-[12px] font-bold tracking-wider uppercase">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`transition-colors py-2 border-b-2 font-bold ${
+                  isActive(link.href)
+                    ? 'text-[#0e387a] border-[#0e387a]'
+                    : 'text-gray-700 border-transparent hover:text-[#0e387a] hover:border-gray-200'
+                }`}
+              >
+                {link.label}
+              </Link>
             ))}
+          </nav>
+
+          {/* Right Action: Bold Orange Give Now Button */}
+          <div className="hidden lg:flex items-center">
+            <Link
+              href="/donate"
+              className="bg-[#f26a21] hover:bg-[#d95813] text-white px-7 py-3 rounded-md font-bold text-[12px] uppercase tracking-wider transition-all shadow-xs hover:shadow-md active:scale-95"
+            >
+              {t.navDonate}
+            </Link>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-white hover:bg-white/10 rounded-lg transition"
-            aria-label="Toggle Menu"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile menu toggle */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <Link
+              href="/donate"
+              className="bg-[#f26a21] text-white px-3.5 py-2 rounded-md font-bold text-[11px] uppercase tracking-wider"
+            >
+              {t.navDonate}
+            </Link>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 text-gray-800 hover:bg-gray-100 rounded-lg transition"
+              aria-label="Toggle Menu"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#070d1e] border-b border-[#e5b958]/20 px-6 py-6 shadow-2xl animate-in slide-in-from-top-4 duration-200 text-white">
-          <nav className="flex flex-col space-y-4 mb-6 text-sm font-bold tracking-wider">
+        <div className="lg:hidden bg-white border-b border-gray-200 px-6 py-6 shadow-xl animate-in slide-in-from-top-2 text-gray-900">
+          <nav className="flex flex-col space-y-3 mb-6 text-sm font-bold tracking-wider uppercase">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`py-2 border-b border-white/5 flex items-center justify-between ${
-                  isActive(link.href) ? 'text-[#e5b958]' : 'text-gray-300 hover:text-white'
+                className={`py-2 border-b border-gray-100 flex items-center justify-between ${
+                  isActive(link.href) ? 'text-[#0e387a]' : 'text-gray-700 hover:text-[#0e387a]'
                 }`}
               >
                 <span>{link.label}</span>
-                {isActive(link.href) && <span className="text-xs text-[#e5b958]">✦</span>}
+                {isActive(link.href) && <span className="text-[#f26a21]">●</span>}
               </Link>
             ))}
             <Link
-              href="/contact"
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-2 border-b border-white/5 text-gray-300"
-            >
-              {t.navContact}
-            </Link>
-            <Link
               href="/admin"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-2 border-b border-white/5 text-sky-blue flex items-center gap-2"
+              className="py-2 border-b border-gray-100 text-gray-500 flex items-center gap-2 text-xs normal-case"
             >
-              <Shield size={16} />
+              <Shield size={15} />
               <span>Админ-панель</span>
             </Link>
           </nav>
 
-          <div className="flex flex-col gap-3">
-            <Link
-              href="/donate"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full bg-gradient-to-r from-accent to-[#e5b958] text-white text-center py-3 rounded-lg font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5"
-            >
-              <Sparkles size={14} />
-              <span>{t.navDonate}</span>
-            </Link>
-            <Link
-              href="/volunteer"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full bg-white/10 border border-white/20 text-white text-center py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-white/20 transition"
-            >
-              {t.heroVolunteerBtn}
-            </Link>
-          </div>
+          <Link
+            href="/donate"
+            onClick={() => setMobileMenuOpen(false)}
+            className="w-full block bg-[#f26a21] hover:bg-[#d95813] text-white text-center py-3 rounded-md font-bold text-xs uppercase tracking-wider shadow-sm transition"
+          >
+            {t.navDonate}
+          </Link>
         </div>
       )}
     </header>
   );
 }
+

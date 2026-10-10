@@ -30,58 +30,8 @@ import {
   Check,
 } from 'lucide-react';
 import Logo from '@/components/Logo';
-
-// Initial Mock Data
-const INITIAL_HOMES = [
-  {
-    id: 'nadezhda',
-    name: 'Детский дом «Надежда»',
-    city: 'Бишкек',
-    type: 'Детский дом',
-    childrenCount: 45,
-    ageRange: '3 – 18 лет',
-    director: 'Асанова Гульнара Касымовна',
-    phone: '+996 312 12 34 56',
-    status: 'Urgent Support Needed',
-    needs: 'Школьные принадлежности, средства гигиены, теплая одежда',
-  },
-  {
-    id: 'svet',
-    name: 'Детский дом «Свет»',
-    city: 'Ош',
-    type: 'Детский дом',
-    childrenCount: 38,
-    ageRange: '2 – 18 лет',
-    director: 'Исмаилов Бакыт Токтогулович',
-    phone: '+996 322 23 45 67',
-    status: 'Verified',
-    needs: 'Зимняя обувь, учебники, продукты длительного хранения',
-  },
-  {
-    id: 'dostuk',
-    name: 'Детский дом «Достук»',
-    city: 'Каракол',
-    type: 'Детский дом',
-    childrenCount: 30,
-    ageRange: '5 – 18 лет',
-    director: 'Мамытова Венера Султановна',
-    phone: '+996 392 24 56 78',
-    status: 'Needs Updated',
-    needs: 'Ноутбуки для занятий, спортивный инвентарь',
-  },
-  {
-    id: 'umut',
-    name: 'Реабилитационный центр «Умут»',
-    city: 'Бишкек',
-    type: 'Центр',
-    childrenCount: 22,
-    ageRange: '2 – 16 лет',
-    director: 'Садыков Эркин Жолдошевич',
-    phone: '+996 312 51 09 87',
-    status: 'Verified',
-    needs: 'Развивающие игры, массажные коврики',
-  },
-];
+import { Organization, DEFAULT_ORGANIZATIONS } from '@/data/homesData';
+import { getHomes, saveHome, deleteHome, getSettings, saveSettings } from '@/lib/db';
 
 const INITIAL_VOLUNTEERS = [
   {
@@ -141,7 +91,7 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'homes' | 'volunteers' | 'donations' | 'settings'>('dashboard');
 
   // State collections
-  const [homes, setHomes] = useState(INITIAL_HOMES);
+  const [homes, setHomes] = useState<Organization[]>(DEFAULT_ORGANIZATIONS);
   const [volunteers, setVolunteers] = useState(INITIAL_VOLUNTEERS);
   const [donations, setDonations] = useState(INITIAL_DONATIONS);
 
@@ -165,29 +115,37 @@ export default function AdminPanel() {
     type: 'Детский дом',
     childrenCount: 30,
     ageRange: '3 – 18 лет',
+    address: '',
     director: '',
     phone: '',
+    email: '',
+    image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop',
+    description: '',
     status: 'Verified',
     needs: '',
   });
 
-  // Load from LocalStorage
+  // Load from Database & LocalStorage
   useEffect(() => {
     const savedAuth = localStorage.getItem('sky_admin_auth');
     if (savedAuth === 'true') {
       setIsAuthenticated(true);
     }
-    const savedHomes = localStorage.getItem('sky_admin_homes');
-    if (savedHomes) {
-      try { setHomes(JSON.parse(savedHomes)); } catch (e) {}
-    }
+
+    // 1. Load homes
+    getHomes().then((data) => {
+      if (data && data.length > 0) setHomes(data);
+    });
+
+    // 2. Load settings
+    getSettings().then((data) => {
+      if (data) setSettings(data);
+    });
+
+    // 3. Load volunteers from storage
     const savedVolunteers = localStorage.getItem('sky_admin_volunteers');
     if (savedVolunteers) {
       try { setVolunteers(JSON.parse(savedVolunteers)); } catch (e) {}
-    }
-    const savedSettings = localStorage.getItem('sky_admin_settings');
-    if (savedSettings) {
-      try { setSettings(JSON.parse(savedSettings)); } catch (e) {}
     }
   }, []);
 
@@ -207,43 +165,68 @@ export default function AdminPanel() {
     localStorage.removeItem('sky_admin_auth');
   };
 
-  // Home Actions
-  const handleSaveHome = (e: React.FormEvent) => {
+  // Home Actions: Persistent DB
+  const handleSaveHome = async (e: React.FormEvent) => {
     e.preventDefault();
-    let updated: typeof homes;
-    if (editingHomeId) {
-      updated = homes.map((h) => (h.id === editingHomeId ? { ...h, ...homeForm } : h));
-    } else {
-      const newId = 'home_' + Date.now();
-      updated = [...homes, { ...homeForm, id: newId }];
-    }
+    const targetId = editingHomeId || ('home_' + Date.now());
+    const payload = {
+      ...homeForm,
+      id: targetId,
+    };
+
+    await saveHome(payload as any);
+    const updated = await getHomes();
     setHomes(updated);
-    localStorage.setItem('sky_admin_homes', JSON.stringify(updated));
     setIsHomeModalOpen(false);
     setEditingHomeId(null);
   };
 
-  const handleDeleteHome = (id: string) => {
-    if (confirm('Вы уверены, что хотите удалить эту организацию из базы?')) {
-      const updated = homes.filter((h) => h.id !== id);
+  const handleDeleteHome = async (id: string) => {
+    if (confirm('Вы уверены, что хотите удалить эту организацию из базы данных?')) {
+      await deleteHome(id);
+      const updated = await getHomes();
       setHomes(updated);
-      localStorage.setItem('sky_admin_homes', JSON.stringify(updated));
     }
   };
 
-  const handleEditHomeClick = (home: typeof homes[0]) => {
+  const handleEditHomeClick = (home: any) => {
     setEditingHomeId(home.id);
     setHomeForm({
       id: home.id,
-      name: home.name,
-      city: home.city,
-      type: home.type,
-      childrenCount: home.childrenCount,
-      ageRange: home.ageRange,
-      director: home.director,
-      phone: home.phone,
-      status: home.status,
-      needs: home.needs,
+      name: home.name || '',
+      city: home.city || 'Бишкек',
+      type: home.type || 'Детский дом',
+      childrenCount: home.childrenCount || 0,
+      ageRange: home.ageRange || '3 – 18 лет',
+      address: home.address || '',
+      director: home.director || '',
+      phone: home.phone || '',
+      email: home.email || '',
+      image: home.image || 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop',
+      description: home.description || '',
+      status: home.status || 'Verified',
+      needs: home.needs || '',
+    });
+    setIsHomeModalOpen(true);
+  };
+
+  const handleOpenAddHomeModal = () => {
+    setEditingHomeId(null);
+    setHomeForm({
+      id: '',
+      name: '',
+      city: 'Бишкек',
+      type: 'Детский дом',
+      childrenCount: 30,
+      ageRange: '3 – 18 лет',
+      address: '',
+      director: '',
+      phone: '+996 ',
+      email: '',
+      image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop',
+      description: '',
+      status: 'Verified',
+      needs: '',
     });
     setIsHomeModalOpen(true);
   };
@@ -256,9 +239,9 @@ export default function AdminPanel() {
   };
 
   // Settings Save
-  const handleSaveSettings = (e: React.FormEvent) => {
+  const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem('sky_admin_settings', JSON.stringify(settings));
+    await saveSettings(settings);
     setSavedSettingsNotice(true);
     setTimeout(() => setSavedSettingsNotice(false), 3000);
   };
@@ -266,21 +249,19 @@ export default function AdminPanel() {
   // If not logged in, render Secure Login Screen
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#070d1e] text-white flex items-center justify-center p-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(#e5b958_1px,transparent_1px)] [background-size:32px_32px] opacity-10 pointer-events-none"></div>
-
-        <div className="bg-[#0b132b] p-8 md:p-10 rounded-3xl border border-[#e5b958]/30 max-w-md w-full shadow-2xl relative z-10 text-center">
+      <div className="min-h-screen bg-[#0e387a] text-white flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="bg-[#092248] p-8 md:p-10 rounded-3xl border border-white/15 max-w-md w-full shadow-2xl relative z-10 text-center">
           <div className="mb-6 flex justify-center">
             <Logo variant="dark" size="lg" />
           </div>
 
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[#e5b958] text-[11px] font-bold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[#f26a21] text-[11px] font-bold uppercase tracking-wider mb-4">
             <Shield size={14} />
             <span>Панель управления проектом</span>
           </div>
 
           <h2 className="text-xl font-bold font-serif mb-2">Вход для координаторов</h2>
-          <p className="text-xs text-gray-400 mb-6 leading-relaxed">
+          <p className="text-xs text-gray-300 mb-6 leading-relaxed">
             Управление детскими домами, модерация анкет волонтёров и финансовая статистика.
           </p>
 
@@ -295,7 +276,7 @@ export default function AdminPanel() {
                   placeholder="Введите пароль..."
                   value={passwordInput}
                   onChange={(e) => setPasswordInput(e.target.value)}
-                  className="w-full p-3.5 bg-white/5 border border-white/15 rounded-xl text-sm focus:outline-none focus:border-[#e5b958] text-white placeholder-gray-500"
+                  className="w-full p-3.5 bg-white/5 border border-white/15 rounded-xl text-sm focus:outline-none focus:border-[#f26a21] text-white placeholder-gray-500"
                 />
                 <Lock size={16} className="absolute right-4 top-4 text-gray-500" />
               </div>
@@ -309,15 +290,15 @@ export default function AdminPanel() {
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-accent to-[#e5b958] text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:brightness-110 active:scale-98 transition shadow-lg cursor-pointer"
+              className="w-full bg-[#f26a21] hover:bg-[#d95813] text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider active:scale-98 transition shadow-lg cursor-pointer"
             >
               Войти в админ-панель
             </button>
           </form>
 
-          <div className="mt-6 pt-4 border-t border-white/10 text-xs text-gray-500">
-            <p>Тестовый пароль: <code className="bg-white/10 px-2 py-0.5 rounded text-[#e5b958]">sky2026</code></p>
-            <Link href="/" className="inline-block mt-3 text-sky-blue hover:underline">
+          <div className="mt-6 pt-4 border-t border-white/10 text-xs text-gray-400">
+            <p>Тестовый пароль: <code className="bg-white/10 px-2 py-0.5 rounded text-[#f26a21]">sky2026</code></p>
+            <Link href="/" className="inline-block mt-3 text-sky-300 hover:underline">
               ← Вернуться на сайт
             </Link>
           </div>
@@ -329,11 +310,11 @@ export default function AdminPanel() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar Navigation */}
-      <aside className="w-full md:w-64 bg-[#070d1e] text-white p-6 flex flex-col justify-between border-r border-[#e5b958]/20 flex-shrink-0">
+      <aside className="w-full md:w-64 bg-[#0e387a] text-white p-6 flex flex-col justify-between border-r border-white/10 flex-shrink-0">
         <div>
           <div className="mb-8">
             <Logo variant="dark" size="sm" />
-            <div className="mt-3 inline-block px-2.5 py-0.5 rounded-full bg-[#e5b958]/10 border border-[#e5b958]/30 text-[#e5b958] text-[9px] font-bold uppercase tracking-wider">
+            <div className="mt-3 inline-block px-2.5 py-0.5 rounded-full bg-white/10 border border-white/20 text-[#f26a21] text-[9px] font-bold uppercase tracking-wider">
               Администратор
             </div>
           </div>
@@ -343,8 +324,8 @@ export default function AdminPanel() {
               onClick={() => setActiveTab('dashboard')}
               className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-left cursor-pointer ${
                 activeTab === 'dashboard'
-                  ? 'bg-[#e5b958] text-[#070d1e] font-extrabold shadow-sm'
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                  ? 'bg-[#f26a21] text-white font-extrabold shadow-sm'
+                  : 'text-gray-200 hover:bg-white/10 hover:text-white'
               }`}
             >
               <TrendingUp size={16} />
@@ -355,8 +336,8 @@ export default function AdminPanel() {
               onClick={() => setActiveTab('homes')}
               className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-left cursor-pointer ${
                 activeTab === 'homes'
-                  ? 'bg-[#e5b958] text-[#070d1e] font-extrabold shadow-sm'
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                  ? 'bg-[#f26a21] text-white font-extrabold shadow-sm'
+                  : 'text-gray-200 hover:bg-white/10 hover:text-white'
               }`}
             >
               <HomeIcon size={16} />
@@ -367,8 +348,8 @@ export default function AdminPanel() {
               onClick={() => setActiveTab('volunteers')}
               className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-left cursor-pointer ${
                 activeTab === 'volunteers'
-                  ? 'bg-[#e5b958] text-[#070d1e] font-extrabold shadow-sm'
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                  ? 'bg-[#f26a21] text-white font-extrabold shadow-sm'
+                  : 'text-gray-200 hover:bg-white/10 hover:text-white'
               }`}
             >
               <Users size={16} />
@@ -379,8 +360,8 @@ export default function AdminPanel() {
               onClick={() => setActiveTab('donations')}
               className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-left cursor-pointer ${
                 activeTab === 'donations'
-                  ? 'bg-[#e5b958] text-[#070d1e] font-extrabold shadow-sm'
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                  ? 'bg-[#f26a21] text-white font-extrabold shadow-sm'
+                  : 'text-gray-200 hover:bg-white/10 hover:text-white'
               }`}
             >
               <Heart size={16} />
@@ -391,8 +372,8 @@ export default function AdminPanel() {
               onClick={() => setActiveTab('settings')}
               className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-left cursor-pointer ${
                 activeTab === 'settings'
-                  ? 'bg-[#e5b958] text-[#070d1e] font-extrabold shadow-sm'
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                  ? 'bg-[#f26a21] text-white font-extrabold shadow-sm'
+                  : 'text-gray-200 hover:bg-white/10 hover:text-white'
               }`}
             >
               <Settings size={16} />
@@ -474,31 +455,16 @@ export default function AdminPanel() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-gradient-to-r from-[#070d1e] to-[#0b132b] text-white p-6 rounded-2xl border border-[#e5b958]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="bg-[#0e387a] text-white p-6 rounded-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
                 <h3 className="font-bold text-sm font-serif">Быстрое действие:</h3>
-                <p className="text-xs text-gray-300">
-                  Добавьте детский дом или актуализируйте список срочных потребностей.
+                <p className="text-xs text-gray-200">
+                  Добавьте детский дом с фото и адресом или актуализируйте список срочных потребностей.
                 </p>
               </div>
               <button
-                onClick={() => {
-                  setEditingHomeId(null);
-                  setHomeForm({
-                    id: '',
-                    name: '',
-                    city: 'Бишкек',
-                    type: 'Детский дом',
-                    childrenCount: 30,
-                    ageRange: '3 – 18 лет',
-                    director: '',
-                    phone: '+996 ',
-                    status: 'Verified',
-                    needs: '',
-                  });
-                  setIsHomeModalOpen(true);
-                }}
-                className="bg-[#e5b958] text-[#070d1e] px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-yellow-400 transition cursor-pointer flex items-center gap-1.5"
+                onClick={handleOpenAddHomeModal}
+                className="bg-[#f26a21] hover:bg-[#d95813] text-white px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition cursor-pointer flex items-center gap-1.5 shadow-sm"
               >
                 <Plus size={16} />
                 <span>Добавить детский дом</span>
@@ -520,23 +486,8 @@ export default function AdminPanel() {
                 </p>
               </div>
               <button
-                onClick={() => {
-                  setEditingHomeId(null);
-                  setHomeForm({
-                    id: '',
-                    name: '',
-                    city: 'Бишкек',
-                    type: 'Детский дом',
-                    childrenCount: 30,
-                    ageRange: '3 – 18 лет',
-                    director: '',
-                    phone: '+996 ',
-                    status: 'Verified',
-                    needs: '',
-                  });
-                  setIsHomeModalOpen(true);
-                }}
-                className="bg-accent text-white px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-orange-600 transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                onClick={handleOpenAddHomeModal}
+                className="bg-[#f26a21] hover:bg-[#d95813] text-white px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <Plus size={16} />
                 <span>Добавить учреждение</span>
@@ -548,7 +499,7 @@ export default function AdminPanel() {
                 <table className="w-full text-left text-xs">
                   <thead className="bg-gray-50/70 border-b border-gray-100 text-gray-400 font-bold uppercase text-[10px] tracking-wider">
                     <tr>
-                      <th className="p-4">Название и город</th>
+                      <th className="p-4">Учреждение (Фото и адрес)</th>
                       <th className="p-4">Воспитанники</th>
                       <th className="p-4">Директор / Контакты</th>
                       <th className="p-4">Статус</th>
@@ -559,19 +510,37 @@ export default function AdminPanel() {
                   <tbody className="divide-y divide-gray-100 text-gray-700">
                     {homes.map((h) => (
                       <tr key={h.id} className="hover:bg-gray-50/50 transition">
-                        <td className="p-4 font-bold text-dark-blue">
-                          <p>{h.name}</p>
-                          <span className="text-[11px] text-gray-400 font-normal">
-                            г. {h.city} • {h.type}
-                          </span>
+                        <td className="p-4 font-bold text-[#0e387a]">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
+                              <img
+                                src={h.image || 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop'}
+                                alt={h.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop';
+                                }}
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-bold text-sm text-[#0e387a] truncate">{h.name}</p>
+                              <p className="text-[11px] text-gray-500 font-normal truncate">
+                                {h.address || `г. ${h.city}`}
+                              </p>
+                              <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-bold">
+                                {h.type}
+                              </span>
+                            </div>
+                          </div>
                         </td>
                         <td className="p-4">
                           <p className="font-semibold">{h.childrenCount} детей</p>
                           <span className="text-[10px] text-gray-400">{h.ageRange}</span>
                         </td>
                         <td className="p-4">
-                          <p>{h.director || 'Не указан'}</p>
-                          <span className="text-[10px] text-sky-blue">{h.phone}</span>
+                          <p className="font-medium text-gray-800">{h.director || 'Не указан'}</p>
+                          <p className="text-[11px] text-[#0e387a] font-bold">{h.phone}</p>
+                          {h.email && <p className="text-[10px] text-gray-400">{h.email}</p>}
                         </td>
                         <td className="p-4">
                           <span
@@ -596,15 +565,15 @@ export default function AdminPanel() {
                         <td className="p-4 text-right space-x-2">
                           <button
                             onClick={() => handleEditHomeClick(h)}
-                            className="p-1.5 text-gray-500 hover:text-dark-blue transition cursor-pointer"
-                            title="Редактировать"
+                            className="p-2 text-gray-600 hover:text-[#0e387a] hover:bg-gray-100 rounded-lg transition cursor-pointer"
+                            title="Редактировать (фото, адрес и т.д.)"
                           >
                             <Edit size={16} />
                           </button>
                           <button
                             onClick={() => handleDeleteHome(h.id)}
-                            className="p-1.5 text-red-400 hover:text-red-600 transition cursor-pointer"
-                            title="Удалить"
+                            className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                            title="Удалить из базы"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -836,42 +805,138 @@ export default function AdminPanel() {
 
       {/* Add / Edit Home Modal */}
       {isHomeModalOpen && (
-        <div className="fixed inset-0 z-50 bg-dark-blue/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-dark-blue font-serif mb-4">
-              {editingHomeId ? 'Редактировать детский дом' : 'Добавить новый детский дом'}
-            </h3>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative max-h-[92vh] overflow-y-auto animate-in zoom-in-95">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
+              <div>
+                <h3 className="text-xl font-bold text-[#0e387a] font-serif">
+                  {editingHomeId ? 'Редактировать детский дом' : 'Добавить детский дом'}
+                </h3>
+                <p className="text-xs text-gray-500">
+                  Все изменения сохраняются в базу данных и сразу видны на сайте.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsHomeModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 p-1 rounded-lg"
+              >
+                ✕
+              </button>
+            </div>
 
             <form onSubmit={handleSaveHome} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-bold text-dark-blue mb-1 uppercase text-[10px]">
-                  Название учреждения *
+              {/* 1. ФОТОГРАФИЯ УЧРЕЖДЕНИЯ С ПРЕВЬЮ */}
+              <div className="p-4 bg-[#f0f4fa] rounded-2xl border border-gray-200">
+                <label className="block font-bold text-[#0e387a] mb-2 uppercase text-[10px] tracking-wider">
+                  Фотография детского дома (URL изображения) *
                 </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Детский дом «Ак-Жол»"
-                  value={homeForm.name}
-                  onChange={(e) => setHomeForm({ ...homeForm, name: e.target.value })}
-                  className="w-full p-2.5 border rounded-xl"
-                />
+                
+                <div className="flex flex-col sm:flex-row gap-4 items-start mb-3">
+                  {/* Превью изображения */}
+                  <div className="w-28 h-28 rounded-xl overflow-hidden bg-gray-200 border-2 border-white shadow-sm flex-shrink-0 relative">
+                    <img
+                      src={homeForm.image || 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop'}
+                      alt="Предпросмотр"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop';
+                      }}
+                    />
+                    <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded">
+                      Превью
+                    </span>
+                  </div>
+
+                  <div className="flex-1 w-full space-y-2">
+                    <input
+                      type="url"
+                      required
+                      placeholder="https://images.unsplash.com/..."
+                      value={homeForm.image}
+                      onChange={(e) => setHomeForm({ ...homeForm, image: e.target.value })}
+                      className="w-full p-2.5 border rounded-xl bg-white text-xs font-mono"
+                    />
+                    <p className="text-[11px] text-gray-500">
+                      Вставьте прямую ссылку на фото или выберите готовый вариант ниже:
+                    </p>
+
+                    {/* Быстрые пресеты качественных фото */}
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        { label: 'Здание / Забота', url: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop' },
+                        { label: 'Учеба / Книги', url: 'https://images.unsplash.com/photo-1511629091441-ee46146481b6?q=80&w=600&auto=format&fit=crop' },
+                        { label: 'Класс / Урок', url: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=600&auto=format&fit=crop' },
+                        { label: 'Школа / Творчество', url: 'https://images.unsplash.com/photo-1588072432836-e10032774350?q=80&w=600&auto=format&fit=crop' },
+                        { label: 'Игры / Спорт', url: 'https://images.unsplash.com/photo-1596495578065-6e0763fa1178?q=80&w=600&auto=format&fit=crop' },
+                      ].map((preset, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setHomeForm({ ...homeForm, image: preset.url })}
+                          className={`text-[10px] px-2 py-1 rounded-md border transition ${
+                            homeForm.image === preset.url
+                              ? 'bg-[#0e387a] text-white border-[#0e387a] font-bold'
+                              : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                          }`}
+                        >
+                          {preset.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              {/* 2. НАЗВАНИЕ И ГОРОД */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-dark-blue mb-1 uppercase text-[10px]">
+                  <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
+                    Название учреждения *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Детский дом «Ак-Жол»"
+                    value={homeForm.name}
+                    onChange={(e) => setHomeForm({ ...homeForm, name: e.target.value })}
+                    className="w-full p-2.5 border rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
                     Город / Регион *
                   </label>
                   <input
                     type="text"
                     required
+                    placeholder="Бишкек / Ош / Каракол..."
                     value={homeForm.city}
                     onChange={(e) => setHomeForm({ ...homeForm, city: e.target.value })}
                     className="w-full p-2.5 border rounded-xl"
                   />
                 </div>
+              </div>
+
+              {/* 3. ТОЧНЫЙ АДРЕС И ТИП */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
+                    Точный адрес учреждения *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="г. Бишкек, ул. Жумабека 123"
+                    value={homeForm.address}
+                    onChange={(e) => setHomeForm({ ...homeForm, address: e.target.value })}
+                    className="w-full p-2.5 border rounded-xl"
+                  />
+                </div>
+
                 <div>
-                  <label className="block font-bold text-dark-blue mb-1 uppercase text-[10px]">
+                  <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
                     Тип учреждения
                   </label>
                   <select
@@ -881,14 +946,16 @@ export default function AdminPanel() {
                   >
                     <option>Детский дом</option>
                     <option>Центр реабилитации</option>
+                    <option>Интернат</option>
                     <option>Приют</option>
                   </select>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              {/* 4. ВОСПИТАННИКИ И СТАТУС */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-bold text-dark-blue mb-1 uppercase text-[10px]">
+                  <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
                     Количество детей
                   </label>
                   <input
@@ -898,8 +965,22 @@ export default function AdminPanel() {
                     className="w-full p-2.5 border rounded-xl"
                   />
                 </div>
+
                 <div>
-                  <label className="block font-bold text-dark-blue mb-1 uppercase text-[10px]">
+                  <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
+                    Возраст воспитанников
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="3 – 18 лет"
+                    value={homeForm.ageRange}
+                    onChange={(e) => setHomeForm({ ...homeForm, ageRange: e.target.value })}
+                    className="w-full p-2.5 border rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
                     Статус учреждения
                   </label>
                   <select
@@ -907,52 +988,97 @@ export default function AdminPanel() {
                     onChange={(e) => setHomeForm({ ...homeForm, status: e.target.value })}
                     className="w-full p-2.5 border rounded-xl bg-white"
                   >
-                    <option value="Verified">Проверен (Verified)</option>
-                    <option value="Urgent Support Needed">Срочная помощь (Urgent)</option>
+                    <option value="Verified">✓ Проверен (Verified)</option>
+                    <option value="Urgent Support Needed">🔴 Срочная помощь (Urgent)</option>
                     <option value="Needs Updated">Обновить данные</option>
                   </select>
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-dark-blue mb-1 uppercase text-[10px]">
-                  Директор учреждения
-                </label>
-                <input
-                  type="text"
-                  placeholder="ФИО директора"
-                  value={homeForm.director}
-                  onChange={(e) => setHomeForm({ ...homeForm, director: e.target.value })}
-                  className="w-full p-2.5 border rounded-xl"
-                />
+              {/* 5. КОНТАКТЫ И РУКОВОДСТВО */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
+                    ФИО директора
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Асанова Гульнара К."
+                    value={homeForm.director}
+                    onChange={(e) => setHomeForm({ ...homeForm, director: e.target.value })}
+                    className="w-full p-2.5 border rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
+                    Контактный телефон
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="+996 312 12 34 56"
+                    value={homeForm.phone}
+                    onChange={(e) => setHomeForm({ ...homeForm, phone: e.target.value })}
+                    className="w-full p-2.5 border rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
+                    Email учреждения
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="home@mail.kg"
+                    value={homeForm.email}
+                    onChange={(e) => setHomeForm({ ...homeForm, email: e.target.value })}
+                    className="w-full p-2.5 border rounded-xl"
+                  />
+                </div>
               </div>
 
+              {/* 6. ПОДРОБНОЕ ОПИСАНИЕ */}
               <div>
-                <label className="block font-bold text-dark-blue mb-1 uppercase text-[10px]">
-                  Срочные потребности (через запятую)
+                <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
+                  Подробное описание деятельности учреждения
                 </label>
                 <textarea
-                  rows={3}
-                  placeholder="Тетради, зимняя обувь, гигиенические наборы..."
+                  rows={2}
+                  placeholder="Опишите историю детского дома, условия проживания, кружки и программы..."
+                  value={homeForm.description}
+                  onChange={(e) => setHomeForm({ ...homeForm, description: e.target.value })}
+                  className="w-full p-2.5 border rounded-xl"
+                ></textarea>
+              </div>
+
+              {/* 7. СПИСОК ПОТРЕБНОСТЕЙ */}
+              <div>
+                <label className="block font-bold text-[#0e387a] mb-1 uppercase text-[10px]">
+                  Срочные потребности (через запятую) *
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="Школьные принадлежности, средства гигиены, теплая одежда..."
                   value={homeForm.needs}
                   onChange={(e) => setHomeForm({ ...homeForm, needs: e.target.value })}
                   className="w-full p-2.5 border rounded-xl"
                 ></textarea>
               </div>
 
-              <div className="flex gap-3 pt-3">
+              {/* КНОПКИ ДЕЙСТВИЯ */}
+              <div className="flex gap-3 pt-3 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setIsHomeModalOpen(false)}
-                  className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold uppercase tracking-wider"
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-bold uppercase tracking-wider transition"
                 >
                   Отмена
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-dark-blue text-white py-3 rounded-xl font-bold uppercase tracking-wider hover:bg-blue-900"
+                  className="flex-1 bg-[#f26a21] hover:bg-[#d95813] text-white py-3 rounded-xl font-bold uppercase tracking-wider transition shadow-md"
                 >
-                  Сохранить
+                  {editingHomeId ? 'Сохранить изменения' : 'Добавить в базу данных'}
                 </button>
               </div>
             </form>

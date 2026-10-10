@@ -1,176 +1,43 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MapPin, Users, Calendar, Search, Filter, Phone, Mail, X, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
-
-interface Organization {
-  id: string;
-  name: string;
-  city: string;
-  type: string;
-  childrenCount: number;
-  ageRange: string;
-  address: string;
-  phone: string;
-  email: string;
-  director: string;
-  image: string;
-  gallery: string[];
-  description: string;
-  urgentNeeds: { item: string; needed: number; received: number; unit: string }[];
-}
-
-const ORGANIZATIONS: Organization[] = [
-  {
-    id: 'nadezhda',
-    name: 'Детский дом «Надежда»',
-    city: 'Бишкек',
-    type: 'Детский дом',
-    childrenCount: 45,
-    ageRange: '3 – 18 лет',
-    address: 'г. Бишкек, ул. Жумабека 123',
-    phone: '+996 312 12 34 56',
-    email: 'nadejda@mail.kg',
-    director: 'Асанова Гульнара Касымовна',
-    image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=600&auto=format&fit=crop',
-    ],
-    description:
-      'Детский дом «Надежда» заботится о детях, оставшихся без попечения родителей. Здесь дети получают уход, питание, обучение и поддержку. Учреждение нуждается в нашей помощи для создания более комфортных условий и развития детей.',
-    urgentNeeds: [
-      { item: 'Школьные принадлежности (тетради, ручки)', needed: 150, received: 105, unit: 'компл.' },
-      { item: 'Средства личной гигиены (мыло, пасты)', needed: 80, received: 30, unit: 'наборов' },
-      { item: 'Зимняя теплая одежда и куртки', needed: 45, received: 10, unit: 'шт.' },
-      { item: 'Бытовая техника (стиральные машины)', needed: 2, received: 1, unit: 'шт.' },
-    ],
-  },
-  {
-    id: 'svet',
-    name: 'Детский дом «Свет»',
-    city: 'Ош',
-    type: 'Детский дом',
-    childrenCount: 38,
-    ageRange: '2 – 18 лет',
-    address: 'г. Ош, ул. Ленина 88',
-    phone: '+996 322 23 45 67',
-    email: 'svet-osh@mail.kg',
-    director: 'Исмаилов Бакыт Токтогулович',
-    image: 'https://images.unsplash.com/photo-1511629091441-ee46146481b6?q=80&w=600&auto=format&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1511629091441-ee46146481b6?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=600&auto=format&fit=crop',
-    ],
-    description:
-      'Учреждение в южном регионе Кыргызстана, в котором воспитываются дети дошкольного и школьного возраста. В детском доме организованы кружки творчества и спортивные секции.',
-    urgentNeeds: [
-      { item: 'Зимняя теплая обувь (размеры 30-40)', needed: 38, received: 15, unit: 'пар' },
-      { item: 'Учебники и художественная литература', needed: 120, received: 90, unit: 'книг' },
-      { item: 'Продукты длительного хранения', needed: 50, received: 35, unit: 'упаковок' },
-    ],
-  },
-  {
-    id: 'dostuk',
-    name: 'Детский дом «Достук»',
-    city: 'Каракол',
-    type: 'Детский дом',
-    childrenCount: 30,
-    ageRange: '5 – 18 лет',
-    address: 'г. Каракол, ул. Гагарина 14',
-    phone: '+996 392 24 56 78',
-    email: 'dostuk-karakol@mail.kg',
-    director: 'Мамытова Венера Султановна',
-    image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=600&auto=format&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=600&auto=format&fit=crop',
-    ],
-    description:
-      '«Достук» находится в Иссык-Кульской области. Особое внимание здесь уделяется профориентации подростков, изучению иностранных языков и цифровой грамотности.',
-    urgentNeeds: [
-      { item: 'Ноутбуки для компьютерного класса', needed: 6, received: 2, unit: 'шт.' },
-      { item: 'Спортивный инвентарь (мячи, сетки)', needed: 20, received: 12, unit: 'ед.' },
-    ],
-  },
-  {
-    id: 'aidanek',
-    name: 'Детский дом «Айданэк»',
-    city: 'Токмок',
-    type: 'Детский дом',
-    childrenCount: 28,
-    ageRange: '4 – 17 лет',
-    address: 'г. Токмок, ул. Дубовицкого 5',
-    phone: '+996 313 85 12 34',
-    email: 'aidanek@mail.kg',
-    director: 'Кожоева Айнура Муратовна',
-    image: 'https://images.unsplash.com/photo-1588072432836-e10032774350?q=80&w=600&auto=format&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1588072432836-e10032774350?q=80&w=600&auto=format&fit=crop',
-    ],
-    description:
-      'Уютный дом для 28 воспитанников в Чуйской области. Педагоги уделяют внимание социализации и подготовке выпускников к самостоятельной жизни.',
-    urgentNeeds: [
-      { item: 'Школьная форма', needed: 28, received: 18, unit: 'компл.' },
-      { item: 'Канцтовары', needed: 50, received: 40, unit: 'наборов' },
-    ],
-  },
-  {
-    id: 'umut',
-    name: 'Реабилитационный центр «Умут»',
-    city: 'Бишкек',
-    type: 'Центр',
-    childrenCount: 22,
-    ageRange: '2 – 16 лет',
-    address: 'г. Бишкек, 7 мкр, 12/1',
-    phone: '+996 312 51 09 87',
-    email: 'umut-center@mail.kg',
-    director: 'Садыков Эркин Жолдошевич',
-    image: 'https://images.unsplash.com/photo-1596495578065-6e0763fa1178?q=80&w=600&auto=format&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1596495578065-6e0763fa1178?q=80&w=600&auto=format&fit=crop',
-    ],
-    description:
-      'Специализированный центр реабилитации для детей с ограниченными возможностями здоровья. Требуются развивающие тренажеры и квалифицированная помощь волонтеров.',
-    urgentNeeds: [
-      { item: 'Развивающие логопедические игры', needed: 15, received: 5, unit: 'наборов' },
-      { item: 'Массажные коврики', needed: 10, received: 6, unit: 'шт.' },
-    ],
-  },
-  {
-    id: 'akzhol',
-    name: 'Детский дом «Ак-Жол»',
-    city: 'Нарын',
-    type: 'Детский дом',
-    childrenCount: 35,
-    ageRange: '3 – 18 лет',
-    address: 'г. Нарын, ул. Орозбакова 42',
-    phone: '+996 352 25 67 89',
-    email: 'akzhol-naryn@mail.kg',
-    director: 'Темиров Азамат Керимович',
-    image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=600&auto=format&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=600&auto=format&fit=crop',
-    ],
-    description:
-      'Высокогорный детский дом в Нарынской области. Суровый климат требует постоянной обеспеченности теплом, теплой одеждой и калорийным питанием.',
-    urgentNeeds: [
-      { item: 'Теплые зимние одеяла и пледы', needed: 35, received: 20, unit: 'шт.' },
-      { item: 'Термобелье и шерстяные носки', needed: 70, received: 30, unit: 'пар' },
-    ],
-  },
-];
+import { fetchOrganizations, getOrganizations, DEFAULT_ORGANIZATIONS, Organization } from '@/data/homesData';
 
 export default function Homes() {
   const { t } = useLanguage();
+  const [orgsList, setOrgsList] = useState<Organization[]>(DEFAULT_ORGANIZATIONS);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState('Все города');
   const [selectedType, setSelectedType] = useState('Все типы');
   const [activeOrg, setActiveOrg] = useState<Organization | null>(null);
 
-  const filteredOrgs = ORGANIZATIONS.filter((org) => {
+  useEffect(() => {
+    // 1. Initial cached render
+    setOrgsList(getOrganizations());
+
+    // 2. Fetch fresh data from persistent Database API
+    fetchOrganizations().then((data) => {
+      if (data && data.length > 0) setOrgsList(data);
+    });
+
+    const handleUpdate = () => {
+      fetchOrganizations().then((data) => {
+        if (data && data.length > 0) setOrgsList(data);
+      });
+    };
+
+    window.addEventListener('sky_homes_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('sky_homes_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  const filteredOrgs = orgsList.filter((org) => {
     const matchesSearch =
       org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       org.city.toLowerCase().includes(searchQuery.toLowerCase());
@@ -235,26 +102,32 @@ export default function Homes() {
               <option>Все типы</option>
               <option>Детский дом</option>
               <option>Центр</option>
+              <option>Приют</option>
             </select>
           </div>
         </div>
 
-        {/* Organizations Grid (Matching Mockup Image 2) */}
+        {/* Organizations Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {filteredOrgs.map((org) => (
             <div
               key={org.id}
               className="bg-white rounded-2xl shadow-xs overflow-hidden border border-gray-100 hover:shadow-md transition flex flex-col group"
             >
-              <div className="relative h-44 overflow-hidden">
+              <div className="relative h-44 overflow-hidden bg-gray-100">
                 <img
-                  src={org.image}
+                  src={org.image || 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop'}
                   alt={org.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                 />
                 <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-xs text-dark-blue text-[10px] font-bold uppercase px-2.5 py-1 rounded-full shadow-xs">
                   {org.type}
                 </span>
+                {org.status === 'Urgent Support Needed' && (
+                  <span className="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-full shadow-xs">
+                    Срочно
+                  </span>
+                )}
               </div>
 
               <div className="p-5 flex flex-col flex-grow">
@@ -298,7 +171,7 @@ export default function Homes() {
         )}
       </div>
 
-      {/* Organization Details Modal / Drawer (Matching Mockup Image 2, Top Right) */}
+      {/* Organization Details Modal */}
       {activeOrg && (
         <div className="fixed inset-0 z-50 bg-dark-blue/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl relative">
@@ -316,7 +189,7 @@ export default function Homes() {
                   {activeOrg.name}
                 </h2>
                 <p className="text-xs text-gray-500 flex items-center">
-                  <MapPin size={14} className="mr-1 text-accent" /> {activeOrg.city} • {activeOrg.address}
+                  <MapPin size={14} className="mr-1 text-accent" /> {activeOrg.city} • {activeOrg.address || 'Адрес уточняется'}
                 </p>
               </div>
 
@@ -328,12 +201,12 @@ export default function Homes() {
               </Link>
             </div>
 
-            {/* Photo gallery */}
+            {/* Photo gallery / Main image */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-              {activeOrg.gallery.map((photo, i) => (
+              {(activeOrg.gallery && activeOrg.gallery.length > 0 ? activeOrg.gallery : [activeOrg.image]).map((photo, i) => (
                 <img
                   key={i}
-                  src={photo}
+                  src={photo || activeOrg.image}
                   alt={activeOrg.name}
                   className="h-32 w-full object-cover rounded-xl"
                 />
@@ -347,34 +220,38 @@ export default function Homes() {
                   О детском доме
                 </h3>
                 <p className="text-xs text-gray-600 leading-relaxed mb-4">
-                  {activeOrg.description}
+                  {activeOrg.description || 'Учреждение оказывает помощь детям и подросткам.'}
                 </p>
 
                 <h3 className="text-sm font-bold text-dark-blue mb-3 uppercase tracking-wider">
                   Срочно необходимо
                 </h3>
-                <div className="space-y-3">
-                  {activeOrg.urgentNeeds.map((need, idx) => {
-                    const percent = Math.round((need.received / need.needed) * 100);
-                    return (
-                      <div key={idx} className="bg-gray-50 p-3 rounded-xl text-xs">
-                        <div className="flex justify-between font-medium text-dark-blue mb-1">
-                          <span>{need.item}</span>
-                          <span className="text-accent font-bold">{percent}% собрано</span>
+                {activeOrg.urgentNeeds && activeOrg.urgentNeeds.length > 0 ? (
+                  <div className="space-y-3">
+                    {activeOrg.urgentNeeds.map((need, idx) => {
+                      const percent = Math.min(100, Math.round((need.received / need.needed) * 100));
+                      return (
+                        <div key={idx} className="bg-gray-50 p-3 rounded-xl text-xs">
+                          <div className="flex justify-between font-medium text-dark-blue mb-1">
+                            <span>{need.item}</span>
+                            <span className="text-accent font-bold">{percent}% собрано</span>
+                          </div>
+                          <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden mb-1">
+                            <div
+                              className="bg-accent h-full rounded-full transition-all duration-500"
+                              style={{ width: `${percent}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-[10px] text-gray-400">
+                            {need.received} из {need.needed} {need.unit}
+                          </span>
                         </div>
-                        <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden mb-1">
-                          <div
-                            className="bg-accent h-full rounded-full transition-all duration-500"
-                            style={{ width: `${percent}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-[10px] text-gray-400">
-                          {need.received} из {need.needed} {need.unit}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-500 bg-gray-50 p-3 rounded-xl">{activeOrg.needs || 'Список потребностей обновляется администрацией.'}</p>
+                )}
               </div>
 
               <div className="md:col-span-5 bg-gray-50/70 p-5 rounded-2xl border border-gray-100 space-y-3 text-xs">
@@ -395,18 +272,18 @@ export default function Homes() {
                 </div>
                 <div>
                   <span className="text-gray-400 block text-[10px]">Директор</span>
-                  <span className="font-bold text-dark-blue">{activeOrg.director}</span>
+                  <span className="font-bold text-dark-blue">{activeOrg.director || 'Не указан'}</span>
                 </div>
                 <div>
                   <span className="text-gray-400 block text-[10px]">Телефон</span>
                   <a href={`tel:${activeOrg.phone}`} className="font-bold text-sky-blue">
-                    {activeOrg.phone}
+                    {activeOrg.phone || '+996 709 809 017'}
                   </a>
                 </div>
                 <div>
                   <span className="text-gray-400 block text-[10px]">Email</span>
                   <a href={`mailto:${activeOrg.email}`} className="font-bold text-sky-blue">
-                    {activeOrg.email}
+                    {activeOrg.email || 'info@projectsky.kg'}
                   </a>
                 </div>
               </div>

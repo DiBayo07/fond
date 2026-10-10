@@ -234,57 +234,7 @@ export default function About() {
           </div>
         </div>
 
-        {/* Наша команда */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold text-dark-blue mb-8 font-serif">
-            Наша команда
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-xs text-center p-5">
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop"
-                alt="Айпери Н."
-                className="w-24 h-24 rounded-full object-cover mx-auto mb-3"
-              />
-              <h4 className="font-bold text-dark-blue text-sm">Айпери Н.</h4>
-              <p className="text-[11px] text-accent font-semibold mb-1">Руководитель проекта</p>
-              <p className="text-[10px] text-gray-400">Координация проектов и партнёрств</p>
-            </div>
 
-            <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-xs text-center p-5">
-              <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop"
-                alt="Эрмек Т."
-                className="w-24 h-24 rounded-full object-cover mx-auto mb-3"
-              />
-              <h4 className="font-bold text-dark-blue text-sm">Эрмек Т.</h4>
-              <p className="text-[11px] text-sky-blue font-semibold mb-1">Координатор волонтёров</p>
-              <p className="text-[10px] text-gray-400">Работа с молодёжью 14+ и тренинги</p>
-            </div>
-
-            <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-xs text-center p-5">
-              <img
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=300&auto=format&fit=crop"
-                alt="Чолпон М."
-                className="w-24 h-24 rounded-full object-cover mx-auto mb-3"
-              />
-              <h4 className="font-bold text-dark-blue text-sm">Чолпон М.</h4>
-              <p className="text-[11px] text-green-btn font-semibold mb-1">Координатор мероприятий</p>
-              <p className="text-[10px] text-gray-400">Организация сборов и поездок</p>
-            </div>
-
-            <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-xs text-center p-5">
-              <img
-                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop"
-                alt="Азат С."
-                className="w-24 h-24 rounded-full object-cover mx-auto mb-3"
-              />
-              <h4 className="font-bold text-dark-blue text-sm">Азат С.</h4>
-              <p className="text-[11px] text-purple-600 font-semibold mb-1">Образовательное направление</p>
-              <p className="text-[10px] text-gray-400">Учебные программы и преподаватели</p>
-            </div>
-          </div>
-        </div>
 
         {/* Bottom Banner */}
         <div className="bg-dark-blue text-white p-8 md:p-10 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6">

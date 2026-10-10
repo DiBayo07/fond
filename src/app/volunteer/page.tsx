@@ -57,6 +57,30 @@ export default function Volunteer() {
       alert('Необходимо согласие на обработку данных');
       return;
     }
+
+    // Save into Admin storage
+    try {
+      const newVolunteer = {
+        id: Date.now(),
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
+        age: formData.age,
+        city: formData.city,
+        phone: formData.phone,
+        email: formData.email,
+        parentName: formData.parentName || '-',
+        parentPhone: formData.parentPhone || '-',
+        directions: formData.directions.length > 0 ? formData.directions : ['Общая помощь'],
+        motivation: formData.motivation || 'Желание помогать детям',
+        status: 'New',
+        date: new Date().toLocaleDateString('ru-RU'),
+      };
+      const existing = JSON.parse(localStorage.getItem('sky_admin_volunteers') || '[]');
+      localStorage.setItem('sky_admin_volunteers', JSON.stringify([newVolunteer, ...existing]));
+      window.dispatchEvent(new Event('sky_volunteers_updated'));
+    } catch (err) {
+      console.error(err);
+    }
+
     setSubmitted(true);
   };
 
