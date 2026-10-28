@@ -151,12 +151,13 @@ export default function AdminPanel() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwordInput === 'sky2026' || passwordInput === 'admin' || passwordInput === '1234') {
+    const adminSecret = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'sky2026';
+    if (passwordInput === adminSecret) {
       setIsAuthenticated(true);
       localStorage.setItem('sky_admin_auth', 'true');
       setAuthError('');
     } else {
-      setAuthError('Неверный пароль администратора. Попробуйте sky2026');
+      setAuthError('Неверный пароль администратора');
     }
   };
 
@@ -297,9 +298,8 @@ export default function AdminPanel() {
           </form>
 
           <div className="mt-6 pt-4 border-t border-white/10 text-xs text-gray-400">
-            <p>Тестовый пароль: <code className="bg-white/10 px-2 py-0.5 rounded text-[#f26a21]">sky2026</code></p>
-            <Link href="/" className="inline-block mt-3 text-sky-300 hover:underline">
-              ← Вернуться на сайт
+            <Link href="/" className="inline-block text-sky-300 hover:underline">
+              ← Вернуться на главную страницу сайта
             </Link>
           </div>
         </div>
