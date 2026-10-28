@@ -371,6 +371,17 @@ function DonateContent() {
               <Lock className="w-3.5 h-3.5" />
               <span>Платежи безопасны и защищены SSL-шифрованием</span>
             </div>
+
+            <p className="text-[11px] text-gray-400 text-center leading-relaxed">
+              Совершая пожертвование, вы принимаете условия{' '}
+              <Link href="/terms" className="text-[#f26a21] hover:underline font-medium">
+                Публичной оферты
+              </Link>{' '}
+              и{' '}
+              <Link href="/privacy" className="text-[#f26a21] hover:underline font-medium">
+                Политики конфиденциальности
+              </Link>
+            </p>
           </form>
         </div>
 
