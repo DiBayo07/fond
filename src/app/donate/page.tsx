@@ -47,7 +47,7 @@ function DonateContent() {
 
   const handleCopyCard = () => {
     if (typeof navigator !== 'undefined') {
-      navigator.clipboard.writeText('4169585357990323');
+      navigator.clipboard.writeText('1033020001504962');
       setCopiedCard(true);
       setTimeout(() => setCopiedCard(false), 2500);
     }
@@ -410,20 +410,21 @@ function DonateContent() {
             <Heart className="absolute -bottom-8 -right-8 w-40 h-40 text-accent opacity-5 pointer-events-none" />
           </div>
 
-          {/* Direct Card Transfer */}
+          {/* Direct Card / Account Transfer */}
           <div className="bg-[#0e387a] text-white p-6 rounded-3xl shadow-lg border border-white/15 relative overflow-hidden">
             <div className="flex items-center justify-between mb-4">
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#f26a21] flex items-center gap-1.5">
-                <span>✦</span> Официальная карта проекта
+                <span>✦</span> Официальные реквизиты
               </span>
-              <span className="text-[11px] font-mono text-gray-300">Visa / Элкарт / MBank</span>
+              <span className="text-[11px] font-mono text-gray-300">MBank / Mbusiness</span>
             </div>
 
             <div className="mb-4">
-              <span className="text-[10px] text-gray-300 block mb-1">Номер карты для прямых переводов:</span>
+              <span className="text-[11px] text-gray-200 block mb-1">Получатель: <strong className="text-white">ИП Токтоналиева А. Т.</strong></span>
+              <span className="text-[10px] text-gray-300 block mb-1">Расчетный счет (KGS):</span>
               <div className="flex items-center justify-between bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
                 <span className="font-mono text-base sm:text-lg font-bold tracking-widest text-white">
-                  4169 5853 5799 0323
+                  1033 0200 0150 4962
                 </span>
                 <button
                   type="button"
@@ -445,8 +446,29 @@ function DonateContent() {
               </div>
             </div>
 
+            {/* QR Code display */}
+            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 text-center my-4">
+              <span className="text-[11px] font-bold text-white block mb-2">Оплата по QR-коду (Mbusiness / MBank)</span>
+              <div className="inline-block p-2 bg-white rounded-xl shadow-md">
+                <img
+                  src="/fond/qr_code.jpg"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src.includes('/fond/qr_code.jpg')) {
+                      target.src = '/qr_code.jpg';
+                    }
+                  }}
+                  alt="QR код для оплаты Mbusiness"
+                  className="w-44 sm:w-52 h-auto max-w-full rounded-lg object-contain mx-auto"
+                />
+              </div>
+              <p className="text-[10px] text-gray-300 mt-2">
+                Отсканируйте камерой в MBank или в любом приложении банка КР
+              </p>
+            </div>
+
             <p className="text-[11px] text-gray-300 leading-relaxed">
-              Вы можете сделать прямой перевод через любое банковское приложение (MBank, Optima, Demir, Бакай, О!Деньги) по номеру карты выше.
+              Вы можете сделать прямой перевод через <strong>MBank</strong>, <strong>Optima</strong>, <strong>Demir</strong>, <strong>Бакай</strong> или <strong>О!Деньги</strong> по номеру расчетного счета выше либо отсканировав QR-код.
             </p>
           </div>
 
@@ -457,10 +479,11 @@ function DonateContent() {
               <span>Банковские реквизиты (Кыргызстан):</span>
             </div>
             <div className="space-y-1.5 text-gray-600 bg-gray-50 p-3.5 rounded-xl font-mono text-[11px]">
-              <p>Получатель: ОО "Project Sky Supporting Youth"</p>
-              <p>БИК: 128001</p>
-              <p>Расчетный счет (KGS): 1280012345678901</p>
-              <p>Назначение: Благотворительное пожертвование</p>
+              <p><strong>Получатель:</strong> ИП Токтоналиева А. Т.</p>
+              <p><strong>Банк:</strong> ОАО «Коммерческий банк КЫРГЫЗСТАН» (MBank)</p>
+              <p><strong>Расчетный счет (KGS):</strong> 1033020001504962</p>
+              <p><strong>Сервис:</strong> Mbusiness</p>
+              <p><strong>Назначение:</strong> Благотворительное пожертвование на нужды детей</p>
             </div>
           </div>
         </div>
@@ -527,23 +550,38 @@ function DonateContent() {
               оформлено. Средства направляются напрямую на нужды подопечных.
             </p>
 
-            {/* Official Card Transfer Box in Modal */}
+            {/* Official Card / Account Transfer Box in Modal */}
             <div className="p-3.5 bg-[#0e387a] text-white rounded-2xl mb-5 text-left border border-white/20">
-              <span className="text-[10px] text-gray-300 block mb-1">Номер карты для прямого перевода:</span>
-              <div className="flex items-center justify-between">
+              <span className="text-[10px] text-gray-300 block mb-1">Получатель: <strong>ИП Токтоналиева А. Т.</strong></span>
+              <span className="text-[10px] text-gray-300 block mb-1">Расчетный счет (KGS):</span>
+              <div className="flex items-center justify-between mb-3">
                 <span className="font-mono text-sm font-bold text-white tracking-wider">
-                  4169 5853 5799 0323
+                  1033 0200 0150 4962
                 </span>
                 <button
                   type="button"
                   onClick={handleCopyCard}
-                  className="bg-[#f26a21] text-white px-2.5 py-1 rounded text-[10px] font-bold hover:bg-[#d95813] transition"
+                  className="bg-[#f26a21] text-white px-2.5 py-1 rounded text-[10px] font-bold hover:bg-[#d95813] transition cursor-pointer"
                 >
-                  {copiedCard ? 'Скопировано!' : 'Скопировать'}
+                  {copiedCard ? 'Скопировано!' : 'Скопировать счет'}
                 </button>
               </div>
-              <p className="text-[10px] text-gray-400 mt-2">
-                Переведите через MBank, Оптима или Бакай.
+
+              <div className="p-2 bg-white rounded-xl text-center mb-2">
+                <img
+                  src="/fond/qr_code.jpg"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src.includes('/fond/qr_code.jpg')) {
+                      target.src = '/qr_code.jpg';
+                    }
+                  }}
+                  alt="QR код Mbusiness"
+                  className="w-36 h-auto mx-auto rounded"
+                />
+              </div>
+              <p className="text-[10px] text-gray-300 text-center">
+                Отсканируйте через MBank или любое банковское приложение КР
               </p>
             </div>
 

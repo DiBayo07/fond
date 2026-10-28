@@ -4,15 +4,17 @@ const STORAGE_KEY_HOMES = 'sky_admin_homes';
 const STORAGE_KEY_VOLUNTEERS = 'sky_admin_volunteers';
 const STORAGE_KEY_SETTINGS = 'sky_admin_settings';
 
-// Supabase environment variables (optional - connects to free Supabase cloud PostgreSQL)
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// Supabase environment variables
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bosyeujkqjplpvbcxusp.supabase.co';
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_1aIi7Ilw2ZTJVWWmePHF_g_7dYrgob6';
 
 const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
 const DEFAULT_SETTINGS = {
   phone: '+996 709 809 017',
-  cardNumber: '4169 5853 5799 0323',
+  cardNumber: '1033020001504962',
+  recipientName: 'ИП Токтоналиева А. Т.',
+  bankName: 'MBank / Mbusiness',
   email: 'info@projectsky.kg',
   office: 'Кыргызстан, г. Бишкек, ул. Токтогула 125',
   instagram: '@projectsky',

@@ -98,7 +98,7 @@ export default function AdminPanel() {
   // Settings
   const [settings, setSettings] = useState({
     phone: '+996 709 809 017',
-    cardNumber: '4169 5853 5799 0323',
+    cardNumber: '1033 0200 0150 4962',
     email: 'info@projectsky.kg',
     office: 'Кыргызстан, г. Бишкек, ул. Токтогула 125',
     instagram: '@projectsky',
@@ -445,12 +445,12 @@ export default function AdminPanel() {
 
               <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
-                  Текущая карта
+                  Текущий счет / Карта
                 </span>
                 <p className="text-sm font-mono font-bold text-dark-blue mt-1">
                   {settings.cardNumber}
                 </p>
-                <span className="text-[10px] text-gray-500 mt-1 inline-block">MBank / Элкарт</span>
+                <span className="text-[10px] text-gray-500 mt-1 inline-block">MBank / Mbusiness</span>
               </div>
             </div>
 
@@ -746,7 +746,7 @@ export default function AdminPanel() {
 
                 <div>
                   <label className="block text-[11px] font-bold text-dark-blue mb-1 uppercase tracking-wider">
-                    Официальный номер карты для донатов *
+                    Официальный расчетный счет / номер карты для донатов *
                   </label>
                   <input
                     type="text"
@@ -755,7 +755,7 @@ export default function AdminPanel() {
                     onChange={(e) => setSettings({ ...settings, cardNumber: e.target.value })}
                     className="w-full p-3 text-xs border border-gray-200 rounded-xl focus:outline-none focus:border-sky-blue font-mono font-bold"
                   />
-                  <p className="text-[10px] text-gray-400 mt-1">Отображается на странице /donate для прямых переводов.</p>
+                  <p className="text-[10px] text-gray-400 mt-1">Отображается на странице /donate для прямых переводов (KGS).</p>
                 </div>
 
                 <div>
