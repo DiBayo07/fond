@@ -26,10 +26,11 @@ export default function Logo({ variant = 'light', size = 'md', showText = true }
         style={{ width: imgSize, height: imgSize }}
       >
         <img
-          src="/fond/logo.jpg"
+          src="/logo.jpg"
           onError={(e) => {
-            if (e.currentTarget.src.indexOf('/fond/logo.jpg') !== -1) {
-              e.currentTarget.src = '/logo.jpg';
+            const target = e.currentTarget;
+            if (target.src.includes('/logo.jpg') && !target.src.includes('/fond/logo.jpg')) {
+              target.src = '/fond/logo.jpg';
             }
           }}
           alt="SKY — Supporting Kids & Youth"

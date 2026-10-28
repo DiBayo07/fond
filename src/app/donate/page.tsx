@@ -451,11 +451,11 @@ function DonateContent() {
               <span className="text-[11px] font-bold text-white block mb-2">Оплата по QR-коду (Mbusiness / MBank)</span>
               <div className="inline-block p-2 bg-white rounded-xl shadow-md">
                 <img
-                  src="/fond/qr_code.jpg"
+                  src="/qr_code.jpg"
                   onError={(e) => {
                     const target = e.currentTarget;
-                    if (target.src.includes('/fond/qr_code.jpg')) {
-                      target.src = '/qr_code.jpg';
+                    if (target.src.includes('/qr_code.jpg') && !target.src.includes('/fond/qr_code.jpg')) {
+                      target.src = '/fond/qr_code.jpg';
                     }
                   }}
                   alt="QR код для оплаты Mbusiness"
@@ -569,11 +569,11 @@ function DonateContent() {
 
               <div className="p-2 bg-white rounded-xl text-center mb-2">
                 <img
-                  src="/fond/qr_code.jpg"
+                  src="/qr_code.jpg"
                   onError={(e) => {
                     const target = e.currentTarget;
-                    if (target.src.includes('/fond/qr_code.jpg')) {
-                      target.src = '/qr_code.jpg';
+                    if (target.src.includes('/qr_code.jpg') && !target.src.includes('/fond/qr_code.jpg')) {
+                      target.src = '/fond/qr_code.jpg';
                     }
                   }}
                   alt="QR код Mbusiness"
